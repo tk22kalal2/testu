@@ -78,40 +78,53 @@
                 btn.disabled = true;
                 btn.textContent = 'Preparing download...';
                 
-                // Fetch the video as a blob
-                const response = await fetch('https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB');
-                
-                if (!response.ok) throw new Error('Failed to download');
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                
-                // Create temporary anchor
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'Approach_to_case_of_suspected_Meningitis.mp4';
-                
-                document.body.appendChild(a);
-                a.click();
-                
-                // Cleanup
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                btn.textContent = 'Download Complete!';
-                setTimeout(() => {
-                    btn.textContent = 'Download Now';
-                    btn.disabled = false;
-                }, 2000);
-                
+                // Try direct download first
+                const directLink = document.createElement('a');
+                directLink.href = 'https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB';
+                directLink.download = 'Approach_to_case_of_suspected_Meningitis.mp4';
+                directLink.click();
+
+                // Fallback to blob method if direct download fails
+                setTimeout(async () => {
+                    if(!btn.disabled) return; // If download succeeded
+                    
+                    console.log('Direct download failed, trying blob method');
+                    try {
+                        const response = await fetch('https://stream26.nextpulse.workers.dev?url=' + encodeURIComponent(directLink.href), {
+                            headers: {
+                                'Content-Type': 'video/mp4'
+                            }
+                        });
+                        
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = directLink.download;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        
+                        btn.textContent = 'Download Complete!';
+                    } catch (error) {
+                        console.error('Blob method failed:', error);
+                        btn.textContent = 'Error: ' + error.message;
+                    }
+                    
+                    setTimeout(() => {
+                        btn.textContent = 'Download Now';
+                        btn.disabled = false;
+                    }, 3000);
+                }, 2000); // Wait 2 seconds before fallback
+
             } catch (error) {
-                console.error('Download error:', error);
-                btn.textContent = 'Error - Try Again';
+                console.error('Initial error:', error);
+                btn.textContent = 'Error: ' + error.message;
                 setTimeout(() => {
                     btn.textContent = 'Download Now';
                     btn.disabled = false;
-                }, 2000);
+                }, 3000);
             }
         });
     </script>
