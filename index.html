@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Secure Video Download</title>
+  <title>Secure Download</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,113 +12,39 @@
       padding-top: 100px;
     }
 
-    h1 {
-      margin-bottom: 30px;
-      color: #333;
-    }
-
     .btn {
-      display: inline-block;
-      margin: 20px;
       padding: 15px 30px;
       font-size: 18px;
+      background-color: #007bff;
+      color: #fff;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      color: #fff;
-      text-decoration: none;
-      transition: background 0.3s ease;
     }
 
-    .watch-btn {
-      background-color: #28a745;
-    }
-
-    .watch-btn:hover {
-      background-color: #218838;
-    }
-
-    .download-btn {
-      background-color: #007bff;
-    }
-
-    .download-btn:hover {
-      background-color: #0069d9;
-    }
-
-    /* Popup modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: rgba(0, 0, 0, 0.6);
-    }
-
-    .modal-content {
-      position: relative;
-      margin: 10% auto;
-      padding: 0;
-      width: 80%;
-      height: 400px;
-      background-color: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .modal iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background: #ff4444;
-      color: #fff;
-      border: none;
-      font-size: 16px;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 10000;
+    .btn:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
 
-  <h1>Access Video</h1>
-
-  <!-- Optional: Watch button -->
-  <a href="https://stream1.nextpulse.workers.dev/watch/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB" class="btn watch-btn" target="_blank">Watch</a>
-
-  <!-- Download Securely button -->
-  <button class="btn download-btn" onclick="openModal()">Download Securely</button>
-
-  <!-- Popup Modal with iframe -->
-  <div id="downloadModal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">Close</button>
-      <iframe id="downloadFrame" src=""></iframe>
-    </div>
-  </div>
+  <h1>Secure Download</h1>
+  <button class="btn" onclick="secureDownload()">Download Securely</button>
 
   <script>
-    function openModal() {
-      const fileURL = "https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
-      document.getElementById('downloadFrame').src = fileURL;
-      document.getElementById('downloadModal').style.display = "block";
-    }
+    function secureDownload() {
+      const originalDownloadLink = "https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
+      const encodedURL = encodeURIComponent(originalDownloadLink);
+      const workerURL = "https://stream26.nextpulse.workers.dev/?q=" + encodedURL;
 
-    function closeModal() {
-      document.getElementById('downloadModal').style.display = "none";
-      document.getElementById('downloadFrame').src = ""; // reset iframe
+      const link = document.createElement('a');
+      link.href = workerURL;
+      link.download = '';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 
