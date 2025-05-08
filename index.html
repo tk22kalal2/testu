@@ -46,8 +46,48 @@
       background-color: #0069d9;
     }
 
-    iframe {
+    /* Popup modal styles */
+    .modal {
       display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      position: relative;
+      margin: 10% auto;
+      padding: 0;
+      width: 80%;
+      height: 400px;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .modal iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: #ff4444;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10000;
     }
   </style>
 </head>
@@ -55,24 +95,30 @@
 
   <h1>Access Video</h1>
 
-  <!-- Watch Button (optional) -->
+  <!-- Optional: Watch button -->
   <a href="https://stream1.nextpulse.workers.dev/watch/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB" class="btn watch-btn" target="_blank">Watch</a>
 
-  <!-- Secure Download Button -->
-  <button class="btn download-btn" onclick="downloadSecurely()">Download Securely</button>
+  <!-- Download Securely button -->
+  <button class="btn download-btn" onclick="openModal()">Download Securely</button>
 
-  <!-- Hidden iframe to trigger download without exposing original URL -->
-  <iframe id="dlFrame"></iframe>
+  <!-- Popup Modal with iframe -->
+  <div id="downloadModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()">Close</button>
+      <iframe id="downloadFrame" src=""></iframe>
+    </div>
+  </div>
 
   <script>
-    function downloadSecurely() {
-      const realDownloadURL = "https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
-      const encodedURL = encodeURIComponent(realDownloadURL);
-      const proxyURL = "https://stream26.nextpulse.workers.dev/?q=" + encodedURL;
+    function openModal() {
+      const fileURL = "https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
+      document.getElementById('downloadFrame').src = fileURL;
+      document.getElementById('downloadModal').style.display = "block";
+    }
 
-      const iframe = document.getElementById('dlFrame');
-      iframe.src = proxyURL;
-      iframe.style.display = "block";
+    function closeModal() {
+      document.getElementById('downloadModal').style.display = "none";
+      document.getElementById('downloadFrame').src = ""; // reset iframe
     }
   </script>
 
