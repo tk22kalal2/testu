@@ -1,52 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Secure Download</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      text-align: center;
-      padding-top: 100px;
-    }
-
-    .btn {
-      padding: 15px 30px;
-      font-size: 18px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Download</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Download Video</h1>
+        <button class="download-btn" id="downloadButton">Download Now</button>
+        <div class="file-info">
+            <p>File: Approach to case of suspected Meningitis</p>
+            <p>Format: MP4 Video</p>
+        </div>
+    </div>
 
-  <h1>Secure Download</h1>
-  <button class="btn" onclick="secureDownload()">Download Securely</button>
-
-  <script>
-    function secureDownload() {
-      const originalDownloadLink = "https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
-      const encodedURL = encodeURIComponent(originalDownloadLink);
-      const workerURL = "https://stream26.nextpulse.workers.dev/?q=" + encodedURL;
-
-      const link = document.createElement('a');
-      link.href = workerURL;
-      link.download = '';
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  </script>
-
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = 'https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB';
+            
+            // Suggest a filename for the download
+            link.download = 'Approach_to_case_of_suspected_Meningitis.mp4';
+            
+            // Append to the document, trigger click, then remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Optional: Change button text temporarily
+            const btn = document.getElementById('downloadButton');
+            btn.textContent = 'Downloading...';
+            btn.style.backgroundColor = '#2E7D32';
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                btn.textContent = 'Download Now';
+                btn.style.backgroundColor = '#4CAF50';
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
