@@ -1,110 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Video Download</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: #f0f2f5;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .download-btn {
-            background: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .download-btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Stream Popup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      padding: 50px;
+    }
+
+    button#streamBtn {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #popupOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #popupContent {
+      background-color: #fff;
+      width: 90%;
+      max-width: 800px;
+      height: 80%;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #popupContent iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #closeBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <button class="download-btn" id="downloadBtn">Download Video</button>
-        <p id="status" style="margin-top: 1rem; color: #666;"></p>
+
+  <button id="streamBtn">STREAM</button>
+
+  <div id="popupOverlay">
+    <div id="popupContent">
+      <button id="closeBtn">&times;</button>
+      <iframe id="streamIframe" src=""></iframe>
     </div>
+  </div>
 
-    <script>
-        const downloadFile = async () => {
-            const btn = document.getElementById('downloadBtn');
-            const status = document.getElementById('status');
-            
-            try {
-                btn.disabled = true;
-                status.textContent = "Initializing secure download...";
-                
-                // Use a proxy server (replace with your Cloudflare Worker URL)
-                const proxyUrl = 'https://stream26.nextpulse.workers.dev/';
-                const targetUrl = 'https://stream1.nextpulse.workers.dev/dl/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB';
-                
-                // Fetch through proxy
-                const response = await fetch(`${proxyUrl}?url=${encodeURIComponent(targetUrl)}`);
-                
-                if (!response.ok) throw new Error(`Server responded with ${response.status}`);
-                
-                // Get filename from Content-Disposition header or use default
-                const filename = response.headers.get('Content-Disposition')?.split('filename=')[1] || 'medical-video.mp4';
-                
-                // Stream the response to avoid memory issues with large files
-                const reader = response.body.getReader();
-                const chunks = [];
-                
-                status.textContent = "Downloading... (0%)";
-                
-                while(true) {
-                    const {done, value} = await reader.read();
-                    if(done) break;
-                    chunks.push(value);
-                    const percent = Math.floor((chunks.length / 100) * 100); // Adjust based on content-length if available
-                    status.textContent = `Downloading... (${percent}%)`;
-                }
-                
-                // Create blob
-                const blob = new Blob(chunks);
-                const url = URL.createObjectURL(blob);
-                
-                // Create invisible download link
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                
-                // Cleanup
-                URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                status.textContent = "Download complete!";
-                btn.disabled = false;
-                
-            } catch (error) {
-                console.error('Download failed:', error);
-                status.textContent = `Error: ${error.message}`;
-                btn.disabled = false;
-            }
-        };
+  <script>
+    const streamBtn = document.getElementById('streamBtn');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const streamIframe = document.getElementById('streamIframe');
+    const closeBtn = document.getElementById('closeBtn');
 
-        document.getElementById('downloadBtn').addEventListener('click', downloadFile);
-    </script>
+    const videoUrl = "https://stream1.nextpulse.workers.dev/watch/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
+
+    streamBtn.addEventListener('click', () => {
+      streamIframe.src = videoUrl;
+      popupOverlay.style.display = 'flex';
+    });
+
+    closeBtn.addEventListener('click', () => {
+      popupOverlay.style.display = 'none';
+      streamIframe.src = ""; // Stop the video
+    });
+  </script>
+
 </body>
 </html>
