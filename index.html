@@ -42,12 +42,14 @@
       position: relative;
       border-radius: 8px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    #popupContent iframe {
+    video#streamPlayer {
       width: 100%;
       height: 100%;
-      border: none;
+      background: black;
     }
 
     #closeBtn {
@@ -73,26 +75,32 @@
   <div id="popupOverlay">
     <div id="popupContent">
       <button id="closeBtn">&times;</button>
-      <iframe id="streamIframe" src=""></iframe>
+      <video id="streamPlayer" controls autoplay>
+        <source id="videoSource" src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
     </div>
   </div>
 
   <script>
     const streamBtn = document.getElementById('streamBtn');
     const popupOverlay = document.getElementById('popupOverlay');
-    const streamIframe = document.getElementById('streamIframe');
+    const streamPlayer = document.getElementById('streamPlayer');
+    const videoSource = document.getElementById('videoSource');
     const closeBtn = document.getElementById('closeBtn');
 
     const videoUrl = "https://stream1.nextpulse.workers.dev/watch/194711/164+Approach+to+case+of+suspected+Meningitis+yw.mp4?hash=AgADsB";
 
     streamBtn.addEventListener('click', () => {
-      streamIframe.src = videoUrl;
+      videoSource.src = videoUrl;
+      streamPlayer.load();
       popupOverlay.style.display = 'flex';
     });
 
     closeBtn.addEventListener('click', () => {
+      streamPlayer.pause();
+      videoSource.src = "";
       popupOverlay.style.display = 'none';
-      streamIframe.src = ""; // Stop the video
     });
   </script>
 
